@@ -5,8 +5,8 @@ import Client.Models exposing (File, MagnetUriRequest, Model, Torrent, magnetUri
 import Client.Util exposing (formatSeconds)
 import Dict exposing (Dict)
 import Filesize
-import Html exposing (Attribute, Html, aside, button, col, colgroup, dd, dl, dt, footer, header, input, li, main_, progress, table, tbody, td, text, th, thead, tr, ul)
-import Html.Attributes exposing (class, style, type_, value)
+import Html exposing (Attribute, Html, aside, button, col, colgroup, dd, dl, dt, footer, h1, header, input, li, main_, progress, table, tbody, td, text, th, thead, tr, ul)
+import Html.Attributes exposing (class, disabled, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode exposing (Error(..), decodeString, field, list)
@@ -24,7 +24,7 @@ port torrents : (String -> msg) -> Sub msg
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { torrents = Dict.empty
-      , input = ""
+      , input = Client.Models.Empty
       , inspect = Nothing
       }
     , Cmd.none
@@ -33,7 +33,7 @@ init _ =
 
 type Msg
     = RecvTorrents String
-    | AddTorrent
+    | AddTorrent Client.Models.UserInput
     | UpdateInput String
     | NoOp
     | NoOpResult (Result Http.Error ())
@@ -43,7 +43,15 @@ type Msg
 
 setTorrents : List Torrent -> Model -> Model
 setTorrents newTorrents model =
-    { model | torrents = Dict.union (toDict newTorrents) model.torrents }
+    let
+        byName : Dict String Torrent
+        byName =
+            toDict newTorrents
+
+        newInspectedTorrent =
+            Maybe.andThen (\t -> Dict.get t.name byName) model.inspect
+    in
+    { model | torrents = byName, inspect = newInspectedTorrent }
 
 
 toDict : List Torrent -> Dict String Torrent
@@ -62,11 +70,16 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
-        AddTorrent ->
-            ( model, postMagnetURI { magnetURI = model.input } )
+        AddTorrent userInput ->
+            case userInput of
+                Client.Models.MagnetLink url ->
+                    ( model, postMagnetURI { magnetURI = url } )
+
+                _ ->
+                    ( model, Cmd.none )
 
         UpdateInput newInput ->
-            ( { model | input = newInput }, Cmd.none )
+            ( { model | input = parseUserInput newInput }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -75,10 +88,22 @@ update msg model =
             ( model, Cmd.none )
 
         InspectTorrent torrent ->
-            ( { model | inspect = Just torrent.name }, Cmd.none )
+            ( { model | inspect = Just torrent }, Cmd.none )
 
         ClearInspect ->
             ( { model | inspect = Nothing }, Cmd.none )
+
+
+parseUserInput : String -> Client.Models.UserInput
+parseUserInput userInput =
+    if String.startsWith "magnet:" userInput then
+        Client.Models.MagnetLink userInput
+
+    else if not (String.isEmpty userInput) then
+        Client.Models.Filter userInput
+
+    else
+        Client.Models.Empty
 
 
 postMagnetURI : MagnetUriRequest -> Cmd Msg
@@ -110,14 +135,18 @@ errorMessage error =
 
 view : Model -> Browser.Document Msg
 view model =
-    let
-        inspectedTorrent : Maybe Torrent
-        inspectedTorrent =
-            findTorrent model.torrents model.inspect
-    in
     { title = "test"
     , body =
-        [ header [] [ input [ type_ "text", onEnter AddTorrent, onInput UpdateInput ] [] ]
+        [ header []
+            [ h1 [] [ text "K-Torrent" ]
+            , input
+                [ type_ "text"
+                , onInput UpdateInput
+                , placeholder "Add Magnet / Filter torrents"
+                ]
+                []
+            , button [ disabled <| not <| isMagnetLink model.input ] [ text "Add Magnet" ]
+            ]
         , main_ []
             [ table []
                 [ colgroup []
@@ -142,19 +171,55 @@ view model =
                     , th [] [ text "UL" ]
                     , th [] [ text "Ratio" ]
                     ]
-                , tbody [] (List.map torrentHtml (markSelected (Dict.values model.torrents) inspectedTorrent))
+                , tbody []
+                    (Dict.values
+                        model.torrents
+                        |> filterTorrents model.input
+                        |> markSelected model.inspect
+                        |> List.map torrentHtml
+                    )
                 ]
             ]
         , aside
             [ class (return "visible" "hidden" model.inspect) ]
-            (Maybe.withDefault [] (Maybe.map detailsHtml inspectedTorrent))
+            (Maybe.withDefault [] (Maybe.map detailsHtml model.inspect))
         , footer [] []
         ]
     }
 
 
-markSelected : List Torrent -> Maybe Torrent -> List ( Torrent, Bool )
-markSelected allTorrents toFind =
+filterTorrents : Client.Models.UserInput -> List Torrent -> List Torrent
+filterTorrents userInput list =
+    case userInput of
+        Client.Models.Filter filter ->
+            List.filter (\t -> String.contains (String.toLower filter) (String.toLower t.name)) list
+
+        _ ->
+            list
+
+
+isMagnetLink : Client.Models.UserInput -> Bool
+isMagnetLink input =
+    case input of
+        Client.Models.MagnetLink _ ->
+            True
+
+        _ ->
+            False
+
+
+isFilter : Client.Models.UserInput -> Bool
+isFilter input =
+    case input of
+        Client.Models.Filter _ ->
+            True
+
+        _ ->
+            False
+
+
+markSelected : Maybe Torrent -> List Torrent -> List ( Torrent, Bool )
+markSelected toFind allTorrents =
     List.map (\t -> ( t, Maybe.withDefault False (Maybe.map (\f -> f == t) toFind) )) allTorrents
 
 

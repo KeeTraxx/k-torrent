@@ -3,6 +3,7 @@ body {
   grid-template:
     [header-left] "head head" 2em [header-right]
     [main-left] "main main" auto [main-right]
+    [inspector-left] "inspector inspector" min-content [inspector-right]
     [footer-left] "foot foot" 2em [footer-right]
     / auto 20rem;
   width: 100vw;
@@ -11,6 +12,20 @@ body {
 
 header {
   grid-area: head;
+
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: space-between;
+
+  > * {
+    margin: 0 1em;
+  }
+
+  input {
+    flex: 0 1 50em;
+  }
 }
 
 main {
@@ -19,7 +34,7 @@ main {
     width: 100%;
     th,
     td {
-      padding: 0.2em;
+      padding: 0.2em 0.3em;
       white-space: nowrap;
       text-overflow: ellipsis;
       vertical-align: middle;
@@ -44,23 +59,21 @@ main {
       &::before {
         content: attr(value) "%";
         text-align: center;
-        margin-top: 1em;
+        margin-top: 0.5em;
       }
       &[value] {
-        height: 3em;
+        height: 2em;
       }
     }
   }
 }
 
 aside {
-  position: fixed;
-  top: 0;
-  right: 0;
   transition: all 300ms;
+  grid-area: inspector;
 
   &.hidden {
-    transform: translateX(100%);
+    display: none;
   }
 }
 

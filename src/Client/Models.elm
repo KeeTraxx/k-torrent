@@ -10,9 +10,15 @@ import Time exposing (Posix)
 
 type alias Model =
     { torrents : Dict String Torrent
-    , input : String
-    , inspect : Maybe String
+    , input : UserInput
+    , inspect : Maybe Torrent
     }
+
+
+type UserInput
+    = Empty
+    | MagnetLink String
+    | Filter String
 
 
 
