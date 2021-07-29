@@ -8,7 +8,7 @@
     "build": "npm-run-all --parallel 'build:*'",
     "sim": "SIM=simple npm run serve",
     "watch:client": "parcel serve --hmr-port 9888 src/Client/index.html",
-    "watch:server": "node src/server/main.js",
+    "watch:server": "nodemon src/server/main.js",
     "build:client": "parcel build src/Client/index.html"
   },
   "keywords": [],

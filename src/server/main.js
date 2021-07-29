@@ -83,41 +83,46 @@ setInterval(() => {
   }
 }, 1000);
 
-const sim = [{
-  name: "testerli Torrent",
-  infoHash: "infohash_1234testerli",
-  magnetURI: "magnet:something",
-  announce: "notsupported",
-  files: [{
-    done: false,
+const sim = [];
+for(let i =0;i<30;i++) {
+  sim.push({
+    name: `testerli Torrent ${i}`,
+    infoHash: "infohash_1234testerli",
+    magnetURI: "magnet:something",
+    announce: "notsupported",
+    files: [{
+      done: false,
+      length: 1234,
+      name: "testfile",
+      path: "./testfile",
+      downloaded: 1234,
+      progress: 0
+    }],
+    timeRemaining: 3600,
+    downloaded: 0,
+    uploaded: 0,
+    downloadSpeed: 123.12,
+    uploadSpeed: 123.12,
+    progress: 0,
+    ratio: 0.5,
+    numPeers: ~~(Math.random() * 100),
+    maxWebConns: ~~(Math.random() * 100),
+    path: '.',
     length: 1234,
-    name: "testfile",
-    path: "./testfile",
-    downloaded: 1234,
-    progress: 0
-  }],
-  timeRemaining: 3600,
-  downloaded: 0,
-  uploaded: 0,
-  downloadSpeed: 123.12,
-  uploadSpeed: 123.12,
-  progress: 0,
-  ratio: 0.5,
-  numPeers: ~~(Math.random() * 100),
-  maxWebConns: ~~(Math.random() * 100),
-  path: '.',
-  length: 1234,
-  created: new Date().toISOString(),
-  createdBy: "simulator",
-  comment: "simulated file"
-}];
+    created: new Date().toISOString(),
+    createdBy: "simulator",
+    comment: "simulated file"
+  });
+  
+}
+
 
 if (process.env.SIM) {
   setInterval(() => {
     sim.forEach((t, i) => {
       t.files.forEach((f, i) => {
         f.downloaded += 204
-        f.progress = (f.progress += 0.1);
+        f.progress = (f.progress += 0.1 * i);
         if (f.progress >= 1) f.progress = 0;
       });
       t.timeRemaining -= 1 * (i + 1);
@@ -126,7 +131,7 @@ if (process.env.SIM) {
       t.uploaded += 12;
       t.downloadSpeed = ~~(Math.random() * 12043);
       t.uploadSpeed = ~~(Math.random() * 12043);
-      t.progress += 0.1;
+      t.progress += 0.01 * i;
       if (t.progress >= 1) t.progress = 0;
       t.ratio = Math.random();
       t.numPeers = ~~(Math.random() * 100);

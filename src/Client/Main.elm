@@ -172,10 +172,9 @@ view model =
                     , th [] [ text "Ratio" ]
                     ]
                 , tbody []
-                    (Dict.values
-                        model.torrents
-                        |> filterTorrents model.input
+                    (filterTorrents model.input model.torrents
                         |> markSelected model.inspect
+                        |> Dict.values
                         |> List.map torrentHtml
                     )
                 ]
@@ -188,14 +187,14 @@ view model =
     }
 
 
-filterTorrents : Client.Models.UserInput -> List Torrent -> List Torrent
-filterTorrents userInput list =
+filterTorrents : Client.Models.UserInput -> Dict String Torrent -> Dict String Torrent
+filterTorrents userInput dict =
     case userInput of
         Client.Models.Filter filter ->
-            List.filter (\t -> String.contains (String.toLower filter) (String.toLower t.name)) list
+            Dict.filter (\k _ -> String.contains (String.toLower filter) (String.toLower k)) dict
 
         _ ->
-            list
+            dict
 
 
 isMagnetLink : Client.Models.UserInput -> Bool
@@ -218,9 +217,14 @@ isFilter input =
             False
 
 
-markSelected : Maybe Torrent -> List Torrent -> List ( Torrent, Bool )
+markSelected : Maybe Torrent -> Dict String Torrent -> Dict String ( Torrent, Bool )
 markSelected toFind allTorrents =
-    List.map (\t -> ( t, Maybe.withDefault False (Maybe.map (\f -> f == t) toFind) )) allTorrents
+    Dict.map (\_ v -> ( v, Maybe.withDefault False <| Maybe.map (\f -> isSameTorrent f v) toFind )) allTorrents
+
+
+isSameTorrent : Torrent -> Torrent -> Bool
+isSameTorrent a b =
+    a.name == b.name
 
 
 return : b -> b -> Maybe a -> b

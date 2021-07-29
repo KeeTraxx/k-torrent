@@ -30,6 +30,7 @@ header {
 
 main {
   grid-area: main;
+  overflow: auto;
   > table {
     width: 100%;
     th,
