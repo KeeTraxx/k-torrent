@@ -1,0 +1,6 @@
+FROM node:lts
+
+RUN npm i
+RUN npm run build
+
+CMD npm start

@@ -17,7 +17,7 @@ jobs:
       with:
         image: keetraxx/k-torrent
         tags: 1, latest
-        registry: registry-url.io
+        registry: docker.io
         dockerfile: Dockerfile.ci
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
