@@ -145,7 +145,11 @@ view model =
                 , placeholder "Add Magnet / Filter torrents"
                 ]
                 []
-            , button [ disabled <| not <| isMagnetLink model.input ] [ text "Add Magnet" ]
+            , button
+                [ disabled <| not <| isMagnetLink model.input
+                , onClick <| AddTorrent model.input
+                ]
+                [ text "Add Magnet" ]
             ]
         , main_ []
             [ table []
