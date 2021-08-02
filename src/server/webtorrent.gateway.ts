@@ -25,7 +25,6 @@ export class WebtorrentGateway
   }
 
   handleConnection(client: Socket) {
-    console.log('connect!', client.id);
     this.logger.log(`Client ${client.id} connected!`);
 
     client.emit('torrents', this.lastValue);
