@@ -83,8 +83,8 @@ export class WebtorrentService {
     });
     this.webtorrent = new WebTorrent({
       // @ts-ignore packages @types/webtorrent not yet published
-      uploadLimit: process.env.UPLOAD_LIMIT || 5 * 1024 * 100,
-      downloadLimit: process.env.DOWNLOAD_LIMIT || 5 * 1024,
+      uploadLimit: parseInt(process.env.UPLOAD_LIMIT) || 5 * 1024 * 100,
+      downloadLimit: parseInt(process.env.DOWNLOAD_LIMIT) || -1,
     });
     this.restoreTorrents();
   }
@@ -140,6 +140,23 @@ export class WebtorrentService {
     );
     this.logger.log(`Successfully saved WebTorrent state.`);
   }
+
+  public getSettings(): WebtorrentSettings {
+    console.log(this.webtorrent);
+    return {
+      // @ts-ignore
+      downloadLimit: this.webtorrent._downloadLimit,
+      // @ts-ignore
+      uploadLimit: this.webtorrent._uploadLimit,
+      downloadPath: process.env.DOWNLOAD_FOLDER || '.',
+    };
+  }
+}
+
+export interface WebtorrentSettings {
+  uploadLimit: number;
+  downloadLimit: number;
+  downloadPath: string;
 }
 
 export interface TorrentDTO {

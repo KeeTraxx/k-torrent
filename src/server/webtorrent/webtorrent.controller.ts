@@ -5,7 +5,11 @@ import {
   Get,
   Post,
 } from '@nestjs/common';
-import { TorrentDTO, WebtorrentService } from './webtorrent.service';
+import {
+  TorrentDTO,
+  WebtorrentService,
+  WebtorrentSettings,
+} from './webtorrent.service';
 
 @Controller('api/torrents')
 export class WebtorrentController {
@@ -25,6 +29,11 @@ export class WebtorrentController {
     } catch (err) {
       throw new BadRequestException(addTorrentRequest, 'Wrongly wrong!');
     }
+  }
+
+  @Get('settings')
+  getSettings(): WebtorrentSettings {
+    return this.webtorrentService.getSettings();
   }
 }
 
