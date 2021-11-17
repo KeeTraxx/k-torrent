@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WebtorrentService } from './webtorrent/webtorrent.service';
+import { TorrentDTO, WebtorrentService } from './webtorrent/webtorrent.service';
 
 @WebSocketGateway({ path: '/ws' })
 export class WebtorrentGateway
@@ -36,6 +36,46 @@ export class WebtorrentGateway
       if (this.lastValue !== data) {
         this.server.emit('torrents', data);
         this.lastValue = data;
+      }
+
+      if (!this.webtorrentService.getTorrents()?.length && process.env.SIM) {
+        this.logger.log('SENDING SSIM!!');
+        const t: TorrentDTO = {
+          announce: ['ANNOUNCE-URL'],
+          comment: 'COMMENT',
+          created: new Date(),
+          createdBy: 'CREATED-BY',
+          done: false,
+          downloadSpeed: ~~(Math.random() * 300 * 1000),
+          downloaded: 1235,
+          files: [
+            {
+              downloaded: 1234,
+              length: 1024,
+              name: 'file.txt',
+              path: '/file.txt',
+              progress: 0.5,
+            },
+          ],
+          infoHash: 'hashihash',
+          lastPieceLength: 123,
+          length: 1234,
+          magnetURI: 'magnet:123455',
+          maxWebConns: 100,
+          name: 'NAME',
+          numPeers: 1234,
+          path: '/path',
+          paused: false,
+          pieceLength: 1024,
+          progress: 0.8,
+          ratio: 0.8,
+          ready: true,
+          received: 1234,
+          timeRemaining: 120345,
+          uploadSpeed: 300,
+          uploaded: 303248,
+        };
+        this.server.emit('torrents', JSON.stringify([t]));
       }
     }, 1000);
   }

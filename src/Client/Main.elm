@@ -5,7 +5,7 @@ import Client.Models exposing (File, MagnetUriRequest, Model, Torrent, magnetUri
 import Client.Util exposing (formatSeconds)
 import Dict exposing (Dict)
 import Filesize
-import Html exposing (Attribute, Html, aside, button, col, colgroup, dd, dl, dt, footer, h1, header, input, li, main_, progress, table, tbody, td, text, th, thead, tr, ul)
+import Html exposing (Attribute, Html, aside, button, col, colgroup, dd, div, dl, dt, footer, h1, header, input, li, main_, progress, table, tbody, td, text, th, thead, tr, ul)
 import Html.Attributes exposing (class, disabled, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
@@ -67,8 +67,8 @@ update msg model =
                 Ok newTorrents ->
                     ( setTorrents newTorrents model, Cmd.none )
 
-                Err _ ->
-                    ( model, Cmd.none )
+                Err error ->
+                    Debug.log (Decode.errorToString error) ( model, Cmd.none )
 
         AddTorrent userInput ->
             case userInput of
@@ -185,7 +185,7 @@ view model =
             ]
         , aside
             [ class (return "visible" "hidden" model.inspect) ]
-            (Maybe.withDefault [] (Maybe.map detailsHtml model.inspect))
+            [ div [ onClick ClearInspect ] [], div [ class "modal" ] (Maybe.withDefault [] (Maybe.map detailsHtml model.inspect)) ]
         , footer [] []
         ]
     }
