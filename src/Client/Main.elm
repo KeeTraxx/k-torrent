@@ -1,5 +1,6 @@
 port module Client.Main exposing (..)
 
+import Array exposing (empty)
 import Browser
 import Client.Models exposing (File, MagnetUriRequest, Model, Torrent, magnetUriRequestEncoder, torrentDecoder)
 import Client.Util exposing (formatSeconds)
@@ -26,6 +27,7 @@ init _ =
     ( { torrents = Dict.empty
       , input = Client.Models.Empty
       , inspect = Nothing
+      , errorString = Nothing
       }
     , Cmd.none
     )
@@ -68,7 +70,7 @@ update msg model =
                     ( setTorrents newTorrents model, Cmd.none )
 
                 Err error ->
-                    Debug.log (Decode.errorToString error) ( model, Cmd.none )
+                    ( { model | errorString = Just <| Decode.errorToString error }, Cmd.none )
 
         AddTorrent userInput ->
             case userInput of
@@ -186,7 +188,7 @@ view model =
         , aside
             [ class (return "visible" "hidden" model.inspect) ]
             [ div [ onClick ClearInspect ] [], div [ class "modal" ] (Maybe.withDefault [] (Maybe.map detailsHtml model.inspect)) ]
-        , footer [] []
+        , footer [] (Maybe.withDefault [] (Maybe.map (\s -> [ text s ]) model.errorString))
         ]
     }
 

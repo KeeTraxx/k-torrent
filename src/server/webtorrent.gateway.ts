@@ -46,7 +46,7 @@ export class WebtorrentGateway
           createdBy: 'CREATED-BY',
           done: false,
           downloadSpeed: ~~(Math.random() * 300 * 1000),
-          downloaded: 1235,
+          downloaded: 1235.5,
           files: [
             {
               downloaded: 1234,

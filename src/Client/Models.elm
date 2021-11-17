@@ -12,6 +12,7 @@ type alias Model =
     { torrents : Dict String Torrent
     , input : UserInput
     , inspect : Maybe Torrent
+    , errorString : Maybe String
     }
 
 
