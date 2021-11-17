@@ -39,7 +39,6 @@ export class WebtorrentGateway
       }
 
       if (!this.webtorrentService.getTorrents()?.length && process.env.SIM) {
-        this.logger.log('SENDING SSIM!!');
         const t: TorrentDTO = {
           announce: ['ANNOUNCE-URL'],
           comment: 'COMMENT',

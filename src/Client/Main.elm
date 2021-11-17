@@ -135,7 +135,7 @@ errorMessage error =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "test"
+    { title = "K-Torrent"
     , body =
         [ header []
             [ h1 [] [ text "K-Torrent" ]
