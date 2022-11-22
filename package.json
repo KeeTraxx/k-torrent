@@ -25,7 +25,7 @@
     "@nestjs/common": "^8.2.1",
     "@nestjs/core": "^8.2.1",
     "@nestjs/platform-express": "^8.2.1",
-    "@nestjs/platform-socket.io": "^8.2.1",
+    "@nestjs/platform-socket.io": "^8.4.7",
     "@nestjs/websockets": "^8.2.1",
     "@types/webtorrent": "^0.109.2",
     "css-reset-and-normalize": "^2.3.5",
@@ -35,7 +35,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.4.0",
-    "socket.io": "^4.3.2",
+    "socket.io": "^4.5.1",
     "webtorrent": "^1.5.8"
   },
   "devDependencies": {
