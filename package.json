@@ -29,7 +29,7 @@
     "@nestjs/websockets": "^8.2.1",
     "@types/webtorrent": "^0.109.2",
     "css-reset-and-normalize": "^2.3.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "postcss": "^8.3.11",
     "postcss-cli": "^9.0.2",
     "reflect-metadata": "^0.1.13",
