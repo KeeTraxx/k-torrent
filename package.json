@@ -39,7 +39,7 @@
     "webtorrent": "^1.5.8"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.1.4",
+    "@nestjs/cli": "^9.1.8",
     "@nestjs/schematics": "^8.0.5",
     "@nestjs/testing": "^8.2.1",
     "@parcel/transformer-elm": "^2.0.1",
@@ -65,7 +65,7 @@
     "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
-    "tsconfig-paths": "^3.11.0",
+    "tsconfig-paths": "^4.1.2",
     "typescript": "^4.4.4"
   },
   "jest": {
