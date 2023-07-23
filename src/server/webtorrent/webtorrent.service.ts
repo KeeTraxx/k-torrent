@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { Torrent, TorrentFile } from 'webtorrent';
 import * as WebTorrent from 'webtorrent';
+import { watch } from 'chokidar';
 
 const toTorrentDTO = ({
   name,
@@ -77,8 +78,12 @@ export class WebtorrentService {
   private readonly logger = new Logger(WebtorrentService.name);
   private webtorrent: WebTorrent.Instance;
   private CONF_DIR = process.env.CONFIG_DIR || '.config';
+  private WATCH_DIR = process.env.WATCH_DIR || '.torrents';
   constructor() {
     fs.mkdir(this.CONF_DIR).catch((err) => {
+      this.logger.verbose(err);
+    });
+    fs.mkdir(this.WATCH_DIR).catch((err) => {
       this.logger.verbose(err);
     });
     this.webtorrent = new WebTorrent({
@@ -87,6 +92,7 @@ export class WebtorrentService {
       downloadLimit: parseInt(process.env.DOWNLOAD_LIMIT) || -1,
     });
     this.restoreTorrents();
+    this.watchTorrentFiles();
   }
   private async restoreTorrents(): Promise<any> {
     const filePath = path.join(this.CONF_DIR, 'active_torrents.json');
@@ -101,6 +107,20 @@ export class WebtorrentService {
     }
   }
 
+  watchTorrentFiles() {
+    this.logger.debug(`Start watching ${this.WATCH_DIR} for new files...`);
+    watch(this.WATCH_DIR)
+      .on('add', path => this.addTorrentFromDirectory(path));
+  }
+
+  async addTorrentFromDirectory(path: string): Promise<void> {
+    console.log('torrent', path);
+    await this.addMagnetURI(path);
+    await fs.unlink(path);
+  }
+
+
+
   public getTorrents(): Array<TorrentDTO> {
     return this.webtorrent.torrents.map(toTorrentDTO);
   }
@@ -114,8 +134,8 @@ export class WebtorrentService {
         const t = this.webtorrent.add(magnetURI, {
           path: process.env.DOWNLOAD_FOLDER || '.',
         });
-        this.logger.log(`Start downloading: ${t.name}...`);
         t.on('ready', () => {
+          this.logger.log(`Start downloading: ${t.name}...`);
           persist && this.persistTorrents();
           resolve(toTorrentDTO(t));
         });
