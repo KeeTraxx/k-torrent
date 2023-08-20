@@ -139,7 +139,8 @@ export class WebtorrentService {
           persist && this.persistTorrents();
           resolve(toTorrentDTO(t));
         });
-        t.on('error', (err) => reject(err));
+        t.on('warning', (warn) => this.logger.log(warn));
+        t.on('error', (err) => this.logger.error(err));
         t.on('done', () => {
           this.logger.log(`Done downloading: ${t.name}!`);
           t.destroy();
