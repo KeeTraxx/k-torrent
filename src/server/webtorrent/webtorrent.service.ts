@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { Torrent, TorrentFile } from 'webtorrent';
-import * as WebTorrent from 'webtorrent';
+import WebTorrent from 'webtorrent';
 import { watch } from 'chokidar';
 
 const toTorrentDTO = ({

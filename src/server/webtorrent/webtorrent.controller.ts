@@ -9,7 +9,7 @@ import {
   TorrentDTO,
   WebtorrentService,
   WebtorrentSettings,
-} from './webtorrent.service';
+} from './webtorrent.service.js';
 
 @Controller('api/torrents')
 export class WebtorrentController {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { WebtorrentService } from './webtorrent/webtorrent.service';
-import { WebtorrentGateway } from './webtorrent.gateway';
-import { WebtorrentController } from './webtorrent/webtorrent.controller';
+import { WebtorrentService } from './webtorrent/webtorrent.service.js';
+import { WebtorrentGateway } from './webtorrent.gateway.js';
+import { WebtorrentController } from './webtorrent/webtorrent.controller.js';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({

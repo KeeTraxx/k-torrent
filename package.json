@@ -29,7 +29,6 @@
     "@nestjs/schedule": "^3.0.1",
     "@nestjs/websockets": "^8.2.1",
     "@types/cron": "^2.0.1",
-    "@types/webtorrent": "^0.109.2",
     "chokidar": "^3.5.3",
     "css-reset-and-normalize": "^2.3.5",
     "express": "^4.17.1",
@@ -86,5 +85,6 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "type": "module"
 }

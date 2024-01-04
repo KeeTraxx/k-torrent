@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { TorrentDTO, WebtorrentService } from './webtorrent/webtorrent.service';
+import { TorrentDTO, WebtorrentService } from './webtorrent/webtorrent.service.js';
 
 @WebSocketGateway({ path: '/ws' })
 export class WebtorrentGateway
